@@ -1,6 +1,6 @@
 {
   "name": "integration-nameOfYourIntegration",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "scripts": {
     "testKarma": "node test/boilerplate/test-karma.js",
     "watch": "watchify ./node_modules/@mparticle/web-kit-wrapper/index.js -v -o build/$KIT-Kit.js",
