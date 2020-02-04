@@ -181,7 +181,7 @@ describe('XYZ Forwarder', function () {
         // window.MockXYZForwarder.eventProperties[0].label.should.equal('label');
         // window.MockXYZForwarder.eventProperties[0].value.should.equal(200);
 
-        // done();
+        done();
     });
 
     it('should log page view', function(done) {
