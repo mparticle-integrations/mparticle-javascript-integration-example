@@ -1,42 +1,43 @@
-import base from "./node_modules/@mparticle/web-kit-wrapper/rollup.base";
+// This file is all boilerplate. Do not edit unless you know what you're doing.
+
+import {
+  production,
+  testEndToEnd
+} from "./node_modules/@mparticle/web-kit-wrapper/rollup.base";
 
 const { ENVIRONMENT } = process.env;
+const initialization = require("./src/initialization");
 
 const productionBuilds = {
   iife: {
-    input: base.production.input,
+    input: production.input,
     output: {
-      ...base.production.output,
+      ...production.output,
       format: "iife",
-      file: "dist/NAMEOFKIT-Kit.iife.js",
-      // name should be in the format mpNAMEOFKIT
-      name: "mpNAMEOFKITKit"
+      file: `dist/${initialization.name}-Kit.iife.js`,
+      name: `${initialization.name}Kit`
     },
-    plugins: [...base.production.plugins]
+    plugins: [...production.plugins]
   },
   cjs: {
-    input: base.production.input,
+    input: production.input,
     output: {
-      ...base.production.output,
+      ...production.output,
       format: "cjs",
-      file: "dist/NAMEOFKIT-Kit.common.js",
-      // name should be in the format mpNAMEOFKIT
-      name: "mpNAMEOFKITKit"
+      file: `dist/${initialization.name}-Kit.common.js`,
+      name: `${initialization.name}Kit`
     },
-    plugins: [...base.production.plugins]
+    plugins: [...production.plugins]
   }
 };
 
 const testEndToEndBuild = {
-  testEndToEnd: {
-    input: base.testEndToEnd.input,
-    output: {
-      ...base.testEndToEnd.output,
-      format: "iife",
-      file: "test/end-to-end-testapp/build/compilation.js",
-      name: "mpEndToEndTests"
-    },
-    plugins: [...base.testEndToEnd.plugins]
+  input: testEndToEnd.input,
+  output: {
+    ...testEndToEnd.output,
+    format: "iife",
+    file: `dist/${initialization.name}-Kit.iife.js`,
+    name: `${initialization.name}KitTestEndToEnd`
   }
 };
 
