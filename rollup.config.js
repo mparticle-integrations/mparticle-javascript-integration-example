@@ -36,9 +36,10 @@ const testEndToEndBuild = {
     output: {
         ...testEndToEnd.output,
         format: 'iife',
-        file: `dist/${initialization.name}-Kit.iife.js`,
-        name: `${initialization.name}KitTestEndToEnd`,
+        file: 'test/end-to-end-testapp/build/compilation.js',
+        name: `${initialization.name}Kit`,
     },
+    plugins: [...testEndToEnd.plugins],
 };
 
 let selectedBuilds = [];
