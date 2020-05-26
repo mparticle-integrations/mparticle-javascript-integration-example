@@ -1,5 +1,5 @@
 /* eslint-disable no-undef*/
-describe('XYZ Forwarder', function () {
+describe('XYZ Forwarder', function() {
     // -------------------DO NOT EDIT ANYTHING BELOW THIS LINE-----------------------
     var MessageType = {
             SessionStart: 1,
@@ -10,7 +10,7 @@ describe('XYZ Forwarder', function () {
             OptOut: 6,
             AppStateTransition: 10,
             Profile: 14,
-            Commerce: 16
+            Commerce: 16,
         },
         EventType = {
             Unknown: 0,
@@ -23,9 +23,10 @@ describe('XYZ Forwarder', function () {
             Social: 7,
             Other: 8,
             Media: 9,
+            ProductPurchase: 16,
             getName: function() {
                 return 'blahblah';
-            }
+            },
         },
         ProductActionType = {
             Unknown: 0,
@@ -38,7 +39,7 @@ describe('XYZ Forwarder', function () {
             Purchase: 7,
             Refund: 8,
             AddToWishlist: 9,
-            RemoveFromWishlist: 10
+            RemoveFromWishlist: 10,
         },
         IdentityType = {
             Other: 0,
@@ -52,224 +53,260 @@ describe('XYZ Forwarder', function () {
             Alias: 8,
             FacebookCustomAudienceId: 9,
         },
-        ReportingService = function () {
+        ReportingService = function() {
             var self = this;
 
             this.id = null;
             this.event = null;
 
-            this.cb = function (forwarder, event) {
+            this.cb = function(forwarder, event) {
                 self.id = forwarder.id;
                 self.event = event;
             };
 
-            this.reset = function () {
+            this.reset = function() {
                 this.id = null;
                 this.event = null;
             };
         },
         reportService = new ReportingService();
 
-// -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
-// -------------------START EDITING BELOW:-----------------------
-// -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
+    // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
+    // -------------------START EDITING BELOW:-----------------------
+    // -------------------mParticle stubs - Add any additional stubbing to our methods as needed-----------------------
     mParticle.Identity = {
         getCurrentUser: function() {
             return {
                 getMPID: function() {
                     return '123';
-                }
-
+                },
             };
-        }
+        },
     };
-// -------------------START EDITING BELOW:-----------------------
-    var MockXYZForwarder = function() {
+    // -------------------START EDITING BELOW:-----------------------
+    var AdobeTargetForwarder = function() {
         var self = this;
-
-        // create properties for each type of event you want tracked, see below for examples
-        this.trackCustomEventCalled = false;
-        this.logPurchaseEventCalled = false;
-        this.initializeCalled = false;
-
-        this.trackCustomName = null;
-        this.logPurchaseName = null;
-        this.apiKey = null;
-        this.appId = null;
-        this.userId = null;
-        this.userAttributes = {};
-        this.userIdField = null;
-
-        this.eventProperties = [];
-        this.purchaseEventProperties = [];
-
-        // stub your different methods to ensure they are being called properly
-        this.initialize = function(appId, apiKey) {
-            self.initializeCalled = true;
-            self.apiKey = apiKey;
-            self.appId = appId;
+        this.getOffer = function(options) {
+            self.getOfferOptions = options;
+            self.success = options.success();
+            self.error = options.error();
         };
-
-        this.stubbedTrackingMethod = function(name, eventProperties){
-            self.trackCustomEventCalled = true;
-            self.trackCustomName = name;
-            self.eventProperties.push(eventProperties);
-            // Return true to indicate event should be reported
-            return true;
+        this.trackEvent = function(options) {
+            self.trackEventOptions = options;
         };
-
-        this.stubbedUserAttributeSettingMethod = function(userAttributes) {
-            self.userId = id;
-            userAttributes = userAttributes || {};
-            if (Object.keys(userAttributes).length) {
-                for (var key in userAttributes) {
-                    if (userAttributes[key] === null) {
-                        delete self.userAttributes[key];
-                    }
-                    else {
-                        self.userAttributes[key] = userAttributes[key];
-                    }
-                }
-            }
-        };
-
-        this.stubbedUserLoginMethod = function(id) {
-            self.userId = id;
+        this.applyOffer = function(offer) {
+            self.applyOfferCalled = true;
+            self.offer = offer;
         };
     };
 
-    before(function () {
-
-    });
+    before(function() {});
 
     beforeEach(function() {
-        window.MockXYZForwarder = new MockXYZForwarder();
+        window.adobe = {
+            target: new AdobeTargetForwarder(),
+        };
         // Include any specific settings that is required for initializing your SDK here
-        var sdkSettings = {
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'customerId'
-        };
-        // You may require userAttributes or userIdentities to be passed into initialization
-        var userAttributes = {
-            color: 'green'
-        };
-        var userIdentities = [{
-            Identity: 'customerId',
-            Type: IdentityType.CustomerId
-        }, {
-            Identity: 'email',
-            Type: IdentityType.Email
-        }, {
-            Identity: 'facebook',
-            Type: IdentityType.Facebook
-        }];
-        mParticle.forwarder.init(sdkSettings, reportService.cb, true, null, userAttributes, userIdentities);
+        var sdkSettings = {};
+        mParticle.forwarder.init(sdkSettings, reportService.cb, true);
     });
 
-    it('should log event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageEvent,
-        //     EventName: 'Test Event',
-        //     EventAttributes: {
-        //         label: 'label',
-        //         value: 200,
-        //         category: 'category'
-        //     }
-        // });
-        
-        // window.MockXYZForwarder.eventProperties[0].label.should.equal('label');
-        // window.MockXYZForwarder.eventProperties[0].value.should.equal(200);
+    it('should track a pageview event', function(done) {
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageView,
+            EventName: 'Test Event',
+            EventAttributes: {
+                label: 'label',
+                value: 200,
+                category: 'category',
+            },
+            CustomFlags: {
+                'ADOBETARGET.MBOX': 'testMBOX',
+            },
+        });
+
+        window.adobe.target.trackEventOptions.mbox.should.equal('testMBOX');
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'label',
+            'label'
+        );
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'value',
+            200
+        );
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'category',
+            'category'
+        );
 
         done();
     });
 
-    it('should log page view', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageView,
-        //     EventName: 'test name',
-        //     EventAttributes: {
-        //         attr1: 'test1',
-        //         attr2: 'test2'
-        //     }
-        // });
-        //
-        // window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockXYZForwarder.trackCustomName.should.equal('test name');
-        // window.MockXYZForwarder.eventProperties[0].attr1.should.equal('test1');
-        // window.MockXYZForwarder.eventProperties[0].attr2.should.equal('test2');
+    it('should track a get offer event', function(done) {
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageEvent,
+            EventName: 'test name',
+            EventAttributes: {
+                attr1: 'test1',
+                attr2: 'test2',
+            },
+            CustomFlags: {
+                'ADOBETARGET.MBOX': 'testMBOX',
+                'ADOBETARGET.GETOFFER': true,
+                'ADOBETARGET.SUCCESS': function(offer) {
+                    return offer;
+                },
+                'ADOBETARGET.ERROR': function(error) {
+                    return error;
+                },
+                'ADOBETARGET.TIMEOUT': 5000,
+            },
+        });
+
+        window.adobe.target.getOfferOptions.mbox.should.equal('testMBOX');
+        window.adobe.target.getOfferOptions.params.should.have.property(
+            'attr1',
+            'test1'
+        );
+        window.adobe.target.getOfferOptions.params.should.have.property(
+            'attr2',
+            'test2'
+        );
+        window.adobe.target.getOfferOptions.should.have.property(
+            'timeout',
+            5000
+        );
+        window.adobe.target.getOfferOptions.should.have.properties([
+            'success',
+            'error',
+        ]);
 
         done();
     });
 
-    it('should log a product purchase commerce event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventName: 'Test Purchase Event',
-        //     EventDataType: MessageType.Commerce,
-        //     EventCategory: EventType.ProductPurchase,
-        //     ProductAction: {
-        //         ProductActionType: ProductActionType.Purchase,
-        //         ProductList: [
-        //             {
-        //                 Sku: '12345',
-        //                 Name: 'iPhone 6',
-        //                 Category: 'Phones',
-        //                 Brand: 'iPhone',
-        //                 Variant: '6',
-        //                 Price: 400,
-        //                 TotalAmount: 400,
-        //                 CouponCode: 'coupon-code',
-        //                 Quantity: 1
-        //             }
-        //         ],
-        //         TransactionId: 123,
-        //         Affiliation: 'my-affiliation',
-        //         TotalAmount: 450,
-        //         TaxAmount: 40,
-        //         ShippingAmount: 10,
-        //         CouponCode: null
-        //     }
-        // });
-        //
-        // window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockXYZForwarder.trackCustomName.should.equal('Purchase');
-        //
-        // window.MockXYZForwarder.eventProperties[0].Sku.should.equal('12345');
-        // window.MockXYZForwarder.eventProperties[0].Name.should.equal('iPhone 6');
-        // window.MockXYZForwarder.eventProperties[0].Category.should.equal('Phones');
-        // window.MockXYZForwarder.eventProperties[0].Brand.should.equal('iPhone');
-        // window.MockXYZForwarder.eventProperties[0].Variant.should.equal('6');
-        // window.MockXYZForwarder.eventProperties[0].Price.should.equal(400);
-        // window.MockXYZForwarder.eventProperties[0].TotalAmount.should.equal(400);
-        // window.MockXYZForwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
-        // window.MockXYZForwarder.eventProperties[0].Quantity.should.equal(1);
+    it('should track a custom event', function(done) {
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageEvent,
+            EventName: 'test name',
+            EventAttributes: {
+                attr1: 'test1',
+                attr2: 'test2',
+            },
+            CustomFlags: {
+                'ADOBETARGET.MBOX': 'testMBOX',
+                'ADOBETARGET.SUCCESS': function(offer) {
+                    return offer;
+                },
+                'ADOBETARGET.ERROR': function(error) {
+                    return error;
+                },
+                'ADOBETARGET.TIMEOUT': 5000,
+                'ADOBETARGET.SELECTOR': 'selector',
+                'ADOBETARGET.TYPE': 'type',
+                'ADOBETARGET.PREVENTDEFAULT': true,
+            },
+        });
+
+        window.adobe.target.trackEventOptions.mbox.should.equal('testMBOX');
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'attr1',
+            'test1'
+        );
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'attr2',
+            'test2'
+        );
+        window.adobe.target.trackEventOptions.should.have.property(
+            'timeout',
+            5000
+        );
+        window.adobe.target.trackEventOptions.should.have.property(
+            'selector',
+            'selector'
+        );
+        window.adobe.target.trackEventOptions.should.have.property(
+            'type',
+            'type'
+        );
+        window.adobe.target.trackEventOptions.should.have.property(
+            'preventDefault',
+            true
+        );
 
         done();
     });
 
-    it('should set customer id user identity on user identity change', function(done) {
-        // var fakeUserStub = {
-        //     getUserIdentities: function() {
-        //         return {
-        //             userIdentities: {
-        //                 customerid: '123'
-        //             }
-        //         };
-        //     },
-        //     getMPID: function() {
-        //         return 'testMPID';
-        //     },
-        //     setUserAttribute: function() {
+    it('should track a product purchase', function(done) {
+        mParticle.forwarder.process({
+            EventName: 'eCommerce - Purchase',
+            EventDataType: MessageType.Commerce,
+            EventCategory: EventType.ProductPurchase,
+            CustomFlags: {
+                'ADOBETARGET.MBOX': 'mboxTest',
+            },
+            ProductAction: {
+                ProductActionType: ProductActionType.Purchase,
+                ProductList: [
+                    {
+                        Sku: 'SKU1',
+                        Name: 'iPhone 6',
+                        Category: 'Phones',
+                        Brand: 'iPhone',
+                        Variant: '6',
+                        Price: 400,
+                        TotalAmount: 400,
+                        CouponCode: 'coupon-code',
+                        Quantity: 1,
+                    },
+                    {
+                        Sku: 'SKU2',
+                        Name: 'iPhone 6',
+                        Category: 'Phones',
+                        Brand: 'iPhone',
+                        Variant: '6',
+                        Price: 400,
+                        TotalAmount: 400,
+                        CouponCode: 'coupon-code',
+                        Quantity: 1,
+                    },
+                ],
+                TransactionId: '123',
+                Affiliation: 'my-affiliation',
+                TotalAmount: 450,
+                TaxAmount: 40,
+                ShippingAmount: 10,
+                CouponCode: null,
+            },
+        });
         //
-        //     },
-        //     removeUserAttribute: function() {
+        window.adobe.target.trackEventOptions.should.have.property(
+            'mbox',
+            'mboxTest'
+        );
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'orderId',
+            '123'
+        );
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'orderTotal',
+            450
+        );
+        window.adobe.target.trackEventOptions.params.should.have.property(
+            'productPurchaseId',
+            'SKU1, SKU2'
+        );
+
+        // window.AdobeTargetForwarder.trackCustomName.should.equal('Purchase');
         //
-        //     }
-        // };
-        //
-        // mParticle.forwarder.onUserIdentified(fakeUserStub);
-        //
-        // window.MockXYZForwarder.userId.should.equal('123');
+        // window.AdobeTargetForwarder.eventProperties[0].Sku.should.equal('12345');
+        // window.AdobeTargetForwarder.eventProperties[0].Name.should.equal('iPhone 6');
+        // window.AdobeTargetForwarder.eventProperties[0].Category.should.equal('Phones');
+        // window.AdobeTargetForwarder.eventProperties[0].Brand.should.equal('iPhone');
+        // window.AdobeTargetForwarder.eventProperties[0].Variant.should.equal('6');
+        // window.AdobeTargetForwarder.eventProperties[0].Price.should.equal(400);
+        // window.AdobeTargetForwarder.eventProperties[0].TotalAmount.should.equal(400);
+        // window.AdobeTargetForwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
+        // window.AdobeTargetForwarder.eventProperties[0].Quantity.should.equal(1);
 
         done();
     });

@@ -26,16 +26,20 @@ EventHandler.prototype.logEvent = function(event) {
         params: params,
     };
 
+    if (timeout) {
+        options.timeout = timeout;
+    }
+
     // an event is either a getOffer event or a trackEvent event
     if (getOffer) {
         options.success = function(offer) {
             window.adobe.target.applyOffer(offer);
-            if (successHandler) {
+            if (successHandler && typeof successHandler === 'function') {
                 successHandler(offer);
             }
         };
         options.error = function(status, error) {
-            if (errorHandler) {
+            if (errorHandler && typeof errorHandler === 'function') {
                 errorHandler(status, error);
             }
         };
@@ -54,9 +58,6 @@ EventHandler.prototype.logEvent = function(event) {
         if (preventDefault) {
             options.preventDefault = preventDefault;
         }
-        if (timeout) {
-            options.timeout = timeout;
-        }
 
         window.adobe.target.trackEvent(options);
     }
@@ -67,7 +68,6 @@ EventHandler.prototype.logEvent = function(event) {
 EventHandler.prototype.logError = function() {};
 
 EventHandler.prototype.logPageView = function(event) {
-    debugger;
     this.logEvent(event);
 };
 

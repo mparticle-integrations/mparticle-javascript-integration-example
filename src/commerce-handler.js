@@ -24,9 +24,9 @@ CommerceHandler.prototype.logCommerceEvent = function(event) {
         window.adobe.target.trackEvent({
             mbox: MBOXNAME,
             params: {
-                orderId: event.TransactionId,
+                orderId: event.ProductAction.TransactionId,
                 orderTotal: price,
-                productPurchaseId: productSkus.join(','),
+                productPurchaseId: productSkus.join(', '),
             },
         });
     }
