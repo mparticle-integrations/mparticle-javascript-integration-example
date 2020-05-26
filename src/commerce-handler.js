@@ -3,6 +3,33 @@ function CommerceHandler(common) {
 }
 
 CommerceHandler.prototype.logCommerceEvent = function(event) {
+    var MBOXNAME = event.CustomFlags['ADOBETARGET.MBOX'];
+    var price = event.ProductAction.TotalAmount || 0;
+    var productSkus = [];
+
+    event.ProductAction.ProductList.forEach(function(product) {
+        if (product.Sku) {
+            productSkus.push(product.Sku);
+        }
+    });
+
+    if (event.EventCategory === mParticle.CommerceEventType.ProductPurchase) {
+        if (!MBOXNAME) {
+            console.log(
+                'ADOBE.MBOX not passed as custom flag; not forwarding to Adobe Target'
+            );
+            return false;
+        }
+
+        window.adobe.target.trackEvent({
+            mbox: MBOXNAME,
+            params: {
+                orderId: event.TransactionId,
+                orderTotal: price,
+                productPurchaseId: productSkus.join(','),
+            },
+        });
+    }
     /*
         Sample ecommerce event schema:
         {

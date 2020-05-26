@@ -1,6 +1,6 @@
 {
-  "name": "integration-nameOfYourIntegration",
-  "version": "1.0.2",
+  "name": "@mparticle/web-adobe-target-kit",
+  "version": "1.0.0",
   "scripts": {
     "testKarma": "node test/boilerplate/test-karma.js",
     "build": "ENVIRONMENT=production rollup --config rollup.config.js",
