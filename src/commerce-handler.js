@@ -3,6 +3,7 @@ function CommerceHandler(common) {
 }
 
 CommerceHandler.prototype.logCommerceEvent = function(event) {
+    window.UserLeap('track', event.EventName);
     /*
         Sample ecommerce event schema:
         {

@@ -1,5 +1,5 @@
 var initialization = {
-    name: 'insertSDKNameHere',
+    name: 'UserLeap',
 /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
@@ -15,26 +15,25 @@ var initialization = {
             /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
                Generally, our integrations create script tags and append them to the <head>. Please follow the following format as a guide:
             */
-
-            // var clientScript = document.createElement('script');
-            // clientScript.type = 'text/javascript';
-            // clientScript.async = true;
-            // clientScript.src = 'https://www.clientscript.com/static/clientSDK.js';   // <---- Update this to be your script
-            // (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(clientScript);
-            // clientScript.onload = function() {
-            //     if (clientSDKObject && eventQueue.length > 0) {
-            //         // Process any events that may have been queued up while forwarder was being initialized.
-            //         for (var i = 0; i < eventQueue.length; i++) {
-            //             processEvent(eventQueue[i]);
-            //         }
-            //          // now that each queued event is processed, we empty the eventQueue
-            //         eventQueue = [];
-            //     }
-            //    clientSDKObject.initialize(forwarderSettings.apiKey);
-            // };
+            var envId = forwarderSettings.environmentId;
+            window.UserLeap = function(){U._queue.push(arguments)}
+            var U = window.UserLeap;
+            U._queue = [];
+            U.envId = envId;
+            var script =document.createElement('script');
+            script.async=1;
+            script.src='https://cdn.userleap.com/shim.js?id='+envId;
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+            script.onload = function() {
+                isInitialized = true;
+            }
         } else {
             // For testing, you should fill out this section in order to ensure any required initialization calls are made,
             // clientSDKObject.initialize(forwarderSettings.apiKey)
+            window.UserLeap = function(){U._queue.push(arguments)}
+            var U = window.UserLeap;
+            U._queue = [];
+            isInitialized = true;
         }
     }
 };

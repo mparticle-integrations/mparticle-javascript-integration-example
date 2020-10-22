@@ -13,12 +13,16 @@ function UserAttributeHandler(common) {
 UserAttributeHandler.prototype.onRemoveUserAttribute = function(
     key,
     mParticleUser
-) {};
+) {
+    window.UserLeap('removeAttributes', [key]);
+};
 UserAttributeHandler.prototype.onSetUserAttribute = function(
     key,
     value,
     mParticleUser
-) {};
+) {
+    window.UserLeap('setAttribute', key, value);
+};
 UserAttributeHandler.prototype.onConsentStateUpdated = function(
     oldState,
     newState,
