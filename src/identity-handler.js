@@ -21,7 +21,26 @@ For more userIdentity types, see http://docs.mparticle.com/developers/sdk/javasc
 function IdentityHandler(common) {
     this.common = common || {};
 }
-IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {};
+IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {
+    var mPUser = mParticleUser.getUserIdentities().userIdentities;
+    var userId = '';
+
+    switch (this.common.settings.userIdentificationType) {
+      case ('CustomerId'):
+        userId = mPUser.customerid;
+        break;
+      case ('Email'):
+        window.UserLeap('setEmail', mPUser.email);
+        break;
+      default:
+        userId = mPUser.customerid;
+        break;
+    }
+
+    if (userId !== '' && typeof userId !== undefined) {
+        window.UserLeap('setUserId', userId);
+    }
+};
 IdentityHandler.prototype.onIdentifyComplete = function(
     mParticleUser,
     identityApiRequest
