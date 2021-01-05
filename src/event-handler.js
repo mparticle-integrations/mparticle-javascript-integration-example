@@ -16,7 +16,9 @@ A non-ecommerce event has the following schema:
 function EventHandler(common) {
     this.common = common || {};
 }
-EventHandler.prototype.logEvent = function(event) {};
+EventHandler.prototype.logEvent = function(event) {
+    window.UserLeap('track', event.EventName);
+};
 EventHandler.prototype.logError = function(event) {
     // The schema for a logError event is the same, but noteworthy differences are as follows:
     // {
@@ -25,6 +27,8 @@ EventHandler.prototype.logError = function(event) {
     // }
 };
 EventHandler.prototype.logPageView = function(event) {
+    //UserLeap automatically tracks page views so no need to log here
+    
     /* The schema for a logPagView event is the same, but noteworthy differences are as follows:
         {
             EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)

@@ -47,6 +47,15 @@ IdentityHandler.prototype.onSetUserIdentity = function(
     forwarderSettings,
     id,
     type
-) {};
+) {
+    switch (type) {
+        case 1:
+            window.UserLeap('setUserId', id);
+            break; 
+        case 7:
+            window.UserLeap('setEmail', id);
+            break;
+    }
+};
 
 module.exports = IdentityHandler;
