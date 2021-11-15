@@ -176,4 +176,130 @@ describe('Google Analytics 4 Event Forwarder', function() {
 
         done();
     });
+
+    it('should log a page event', function(done) {
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageEvent,
+            EventName: 'test name',
+            EventAttributes: {
+                attr1: 'test1',
+                attr2: 'test2',
+            },
+            CustomFlags: {},
+        });
+
+        // TODO: Update MAPPEDNAME, add any mapped event attrs above, and below to the `result`
+        // var result = [
+        //     'event',
+        //     MAPPEDNAME,
+        //     {
+        //         mapped_foo1: 'bar1',
+        //         mapped_foo2: 'bar2',
+        //     },
+        // ];
+
+        // window.dataLayer[0][2].should.match(result);
+
+        done();
+    });
+
+    it('should log page view', function(done) {
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageEvent,
+            EventName: 'test name',
+            EventAttributes: {
+                attr1: 'test1',
+                attr2: 'test2',
+            },
+            CustomFlags: {
+                'Google.Title': 'Foo Page Title',
+                'Google.Location': '/foo',
+            },
+        });
+
+        // TODO: Update MAPPEDNAME and any mapped event attributes/parameters
+        // var result = [
+        //     'event',
+        //     MAPPEDNAME,
+        //     {
+        //         page_title: 'Foo Page Title',
+        //         page_location: '/foo',
+        //     },
+        // ];
+        // window.dataLayer[0][2].should.match(result);
+
+        done();
+    });
+
+    it('should log a product purchase commerce event', function(done) {
+        // mParticle.forwarder.process({
+        //     EventName: 'Test Purchase Event',
+        //     EventDataType: MessageType.Commerce,
+        //     EventCategory: EventType.ProductPurchase,
+        //     ProductAction: {
+        //         ProductActionType: ProductActionType.Purchase,
+        //         ProductList: [
+        //             {
+        //                 Sku: '12345',
+        //                 Name: 'iPhone 6',
+        //                 Category: 'Phones',
+        //                 Brand: 'iPhone',
+        //                 Variant: '6',
+        //                 Price: 400,
+        //                 TotalAmount: 400,
+        //                 CouponCode: 'coupon-code',
+        //                 Quantity: 1
+        //             }
+        //         ],
+        //         TransactionId: 123,
+        //         Affiliation: 'my-affiliation',
+        //         TotalAmount: 450,
+        //         TaxAmount: 40,
+        //         ShippingAmount: 10,
+        //         CouponCode: null
+        //     }
+        // });
+        //
+        // window.mockGA4EventForwarder.trackCustomEventCalled.should.equal(true);
+        // window.mockGA4EventForwarder.trackCustomName.should.equal('Purchase');
+        //
+        // window.mockGA4EventForwarder.eventProperties[0].Sku.should.equal('12345');
+        // window.mockGA4EventForwarder.eventProperties[0].Name.should.equal('iPhone 6');
+        // window.mockGA4EventForwarder.eventProperties[0].Category.should.equal('Phones');
+        // window.mockGA4EventForwarder.eventProperties[0].Brand.should.equal('iPhone');
+        // window.mockGA4EventForwarder.eventProperties[0].Variant.should.equal('6');
+        // window.mockGA4EventForwarder.eventProperties[0].Price.should.equal(400);
+        // window.mockGA4EventForwarder.eventProperties[0].TotalAmount.should.equal(400);
+        // window.mockGA4EventForwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
+        // window.mockGA4EventForwarder.eventProperties[0].Quantity.should.equal(1);
+
+        done();
+    });
+
+    it('should set customer id user identity on user identity change', function(done) {
+        // var fakeUserStub = {
+        //     getUserIdentities: function() {
+        //         return {
+        //             userIdentities: {
+        //                 customerid: '123'
+        //             }
+        //         };
+        //     },
+        //     getMPID: function() {
+        //         return 'testMPID';
+        //     },
+        //     setUserAttribute: function() {
+        //
+        //     },
+        //     removeUserAttribute: function() {
+        //
+        //     }
+        // };
+        //
+        // mParticle.forwarder.onUserIdentified(fakeUserStub);
+        //
+        // window.mockGA4EventForwarder.userId.should.equal('123');
+
+        done();
+    });
 });
