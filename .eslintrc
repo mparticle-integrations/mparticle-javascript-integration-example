@@ -2,10 +2,10 @@
     "env": {
         "browser": true,
         "node": true
-
     },
     "globals": {
         "mParticle": true,
+        "gtag": true,
         "describe": true,
         "Should": true,
         "MockHttpServer": true,
