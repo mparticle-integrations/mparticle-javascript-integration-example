@@ -40,19 +40,34 @@ describe('Google Analytics 4 Event Forwarder', function() {
             AddToWishlist: 9,
             RemoveFromWishlist: 10,
         },
-        IdentityType = {
-            Other: 0,
-            CustomerId: 1,
-            Facebook: 2,
-            Twitter: 3,
-            Google: 4,
-            Microsoft: 5,
-            Yahoo: 6,
-            Email: 7,
-            Alias: 8,
-            FacebookCustomAudienceId: 9,
-        },
-        ReportingService = function() {
+        CommerceEventType = {
+            ProductAddToCart: 10,
+            ProductRemoveFromCart: 11,
+            ProductCheckout: 12,
+            ProductCheckoutOption: 13,
+            ProductClick: 14,
+            ProductViewDetail: 15,
+            ProductPurchase: 16,
+            ProductRefund: 17,
+            PromotionView: 18,
+            PromotionClick: 19,
+            ProductAddToWishlist: 20,
+            ProductRemoveFromWishlist: 21,
+            ProductImpression: 22,
+        };
+    (IdentityType = {
+        Other: 0,
+        CustomerId: 1,
+        Facebook: 2,
+        Twitter: 3,
+        Google: 4,
+        Microsoft: 5,
+        Yahoo: 6,
+        Email: 7,
+        Alias: 8,
+        FacebookCustomAudienceId: 9,
+    }),
+        (ReportingService = function() {
             var self = this;
 
             this.id = null;
@@ -67,8 +82,8 @@ describe('Google Analytics 4 Event Forwarder', function() {
                 this.id = null;
                 this.event = null;
             };
-        },
-        reportService = new ReportingService();
+        }),
+        (reportService = new ReportingService());
 
     // -------------------DO NOT EDIT ANYTHING ABOVE THIS LINE-----------------------
     // -------------------START EDITING BELOW:-----------------------
@@ -135,6 +150,7 @@ describe('Google Analytics 4 Event Forwarder', function() {
 
     beforeEach(function() {
         window.mockGA4EventForwarder = new mockGA4EventForwarder();
+        window.dataLayer = [];
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
             clientKey: '123456',
@@ -232,46 +248,96 @@ describe('Google Analytics 4 Event Forwarder', function() {
     });
 
     it('should log a product purchase commerce event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventName: 'Test Purchase Event',
-        //     EventDataType: MessageType.Commerce,
-        //     EventCategory: EventType.ProductPurchase,
-        //     ProductAction: {
-        //         ProductActionType: ProductActionType.Purchase,
-        //         ProductList: [
-        //             {
-        //                 Sku: '12345',
-        //                 Name: 'iPhone 6',
-        //                 Category: 'Phones',
-        //                 Brand: 'iPhone',
-        //                 Variant: '6',
-        //                 Price: 400,
-        //                 TotalAmount: 400,
-        //                 CouponCode: 'coupon-code',
-        //                 Quantity: 1
-        //             }
-        //         ],
-        //         TransactionId: 123,
-        //         Affiliation: 'my-affiliation',
-        //         TotalAmount: 450,
-        //         TaxAmount: 40,
-        //         ShippingAmount: 10,
-        //         CouponCode: null
-        //     }
-        // });
-        //
-        // window.mockGA4EventForwarder.trackCustomEventCalled.should.equal(true);
-        // window.mockGA4EventForwarder.trackCustomName.should.equal('Purchase');
-        //
-        // window.mockGA4EventForwarder.eventProperties[0].Sku.should.equal('12345');
-        // window.mockGA4EventForwarder.eventProperties[0].Name.should.equal('iPhone 6');
-        // window.mockGA4EventForwarder.eventProperties[0].Category.should.equal('Phones');
-        // window.mockGA4EventForwarder.eventProperties[0].Brand.should.equal('iPhone');
-        // window.mockGA4EventForwarder.eventProperties[0].Variant.should.equal('6');
-        // window.mockGA4EventForwarder.eventProperties[0].Price.should.equal(400);
-        // window.mockGA4EventForwarder.eventProperties[0].TotalAmount.should.equal(400);
-        // window.mockGA4EventForwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
-        // window.mockGA4EventForwarder.eventProperties[0].Quantity.should.equal(1);
+        mParticle.forwarder.process({
+            CurrencyCode: 'USD',
+            EventName: 'Test Purchase Event',
+            EventDataType: MessageType.Commerce,
+            EventCategory: CommerceEventType.ProductAddToCart,
+            ProductAction: {
+                ProductActionType: ProductActionType.AddToCart,
+                ProductList: [
+                    {
+                        Attributes: {
+                            eventMetric1: 'metric2',
+                            journeyType: 'testjourneytype1',
+                        },
+                        Brand: 'brand',
+                        Category: 'category',
+                        CouponCode: 'coupon',
+                        Name: 'iphone',
+                        Position: 1,
+                        Price: 999,
+                        Quantity: 1,
+                        Sku: 'iphoneSKU',
+                        TotalAmount: 999,
+                        Variant: 'variant',
+                    },
+                    {
+                        Attributes: {
+                            eventMetric1: 'metric1',
+                            journeyType: 'testjourneytype2',
+                        },
+                        Brand: 'brand',
+                        Category: 'category',
+                        CouponCode: 'coupon',
+                        Name: 'iphone',
+                        Position: 1,
+                        Price: 999,
+                        Quantity: 1,
+                        Sku: 'iphoneSKU',
+                        TotalAmount: 999,
+                        Variant: 'variant',
+                    },
+                ],
+                TotalAmount: 450,
+                TaxAmount: 40,
+                ShippingAmount: 10,
+            },
+        });
+
+        var result = [
+            'event',
+            'add_to_cart',
+            {
+                currency: 'USD',
+                items: [
+                    {
+                        attributes: {
+                            eventMetric1: 'metric2',
+                            journeyType: 'testjourneytype1',
+                        },
+                        coupon_code: 'coupon',
+                        item_brand: 'brand',
+                        item_category: 'category',
+                        item_id: 'iphoneSKU',
+                        item_name: 'iphone',
+                        item_variant: 'variant',
+                        position: 1,
+                        price: 999,
+                        quantity: 1,
+                        total_amount: 999,
+                    },
+                    {
+                        attributes: {
+                            eventMetric1: 'metric1',
+                            journeyType: 'testjourneytype2',
+                        },
+                        coupon_code: 'coupon',
+                        item_brand: 'brand',
+                        item_category: 'category',
+                        item_id: 'iphoneSKU',
+                        item_name: 'iphone',
+                        item_variant: 'variant',
+                        position: 1,
+                        price: 999,
+                        quantity: 1,
+                        total_amount: 999,
+                    },
+                ],
+            },
+        ];
+
+        window.dataLayer[0].should.match(result);
 
         done();
     });
