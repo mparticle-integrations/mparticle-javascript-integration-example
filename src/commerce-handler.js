@@ -36,6 +36,20 @@ CommerceHandler.prototype.buildCheckout = function(event) {
     };
 };
 
+// TODO: For legacy GA, they only had 1 checkout option, but now they have 2 checkout options. 
+// 1. add_shipping_info
+// 2. add_Payment_info
+// We will likely have to provide a custom flag
+
+// CommerceHandler.prototype.buildCheckoutOption = function (event) {
+//     return {
+//         // TODO: FIGURE OUT HOW CHECKOUT OPTION NOW MAPS FROM MPARTICLE GIVEN GA4 HAS 2 DIFFERENT CHECKOUT OPTIONS - https://support.google.com/analytics/answer/10119380?hl=en
+//         // add_shipping_info & add_payment_info
+//         items: buildProductsList(event.ProductAction.ProductList),
+//         coupon: event.ProductAction ? event.ProductAction.CouponCode : null,
+//     };
+// };
+
 CommerceHandler.prototype.buildImpression = function(event, impression) {
     return {
         event: event,
@@ -225,47 +239,6 @@ CommerceHandler.prototype.logCommerceEvent = function(event) {
         ga4CommerceEventParameters
     );
     return true;
-    /*
-        Sample ecommerce event schema:
-        {
-            CurrencyCode: 'USD',
-            DeviceId:'a80eea1c-57f5-4f84-815e-06fe971b6ef2', // MP generated
-            EventAttributes: { key1: 'value1', key2: 'value2' },
-            EventType: 16,
-            EventCategory: 10, // (This is an add product to cart event, see below for additional ecommerce EventCategories)
-            EventName: "eCommerce - AddToCart",
-            MPID: "8278431810143183490",
-            ProductAction: {
-                Affiliation: 'aff1',
-                CouponCode: 'coupon',
-                ProductActionType: 7,
-                ProductList: [
-                    {
-                        Attributes: { prodKey1: 'prodValue1', prodKey2: 'prodValue2' },
-                        Brand: 'Apple',
-                        Category: 'phones',
-                        CouponCode: 'coupon1',
-                        Name: 'iPhone',
-                        Price: '600',
-                        Quantity: 2,
-                        Sku: "SKU123",
-                        TotalAmount: 1200,
-                        Variant: '64GB'
-                    }
-                ],
-                TransactionId: "tid1",
-                ShippingAmount: 10,
-                TaxAmount: 5,
-                TotalAmount: 1215,
-            },
-            UserAttributes: { userKey1: 'userValue1', userKey2: 'userValue2' }
-            UserIdentities: [
-                {
-                    Identity: 'test@gmail.com', Type: 7
-                }
-            ]
-        }
-    */
 };
 
 // Utility function
@@ -345,6 +318,8 @@ function mapGA4EcommerceEventName(mpEventType) {
             return 'purchase';
         case ProductActionTypes.Checkout:
             return 'begin_checkout';
+        case ProductActionTypes.CheckoutOption:
+            return 'add_shipping_info';
         case ProductActionTypes.Click:
             return 'select_item';
         case ProductActionTypes.Impression:
