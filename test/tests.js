@@ -145,7 +145,7 @@ describe('Google Analytics 4 Event Forwarder', function() {
             self.userId = id;
         };
     };
-
+    var result;
     before(function() {});
 
     beforeEach(function() {
@@ -183,6 +183,47 @@ describe('Google Analytics 4 Event Forwarder', function() {
             userAttributes,
             userIdentities
         );
+        result = [
+            'event',
+            'event_type_to_be_updated',
+            {
+                currency: 'USD',
+                items: [
+                    {
+                        attributes: {
+                            eventMetric1: 'metric2',
+                            journeyType: 'testjourneytype1',
+                        },
+                        coupon_code: 'coupon',
+                        item_brand: 'brand',
+                        item_category: 'category',
+                        item_id: 'iphoneSKU',
+                        item_name: 'iphone',
+                        item_variant: 'variant',
+                        position: 1,
+                        price: 999,
+                        quantity: 1,
+                        total_amount: 999,
+                    },
+                    {
+                        attributes: {
+                            eventMetric1: 'metric1',
+                            journeyType: 'testjourneytype2',
+                        },
+                        coupon_code: 'coupon',
+                        item_brand: 'brand',
+                        item_category: 'category',
+                        item_id: 'iphoneSKU',
+                        item_name: 'iphone',
+                        item_variant: 'variant',
+                        position: 1,
+                        price: 999,
+                        quantity: 1,
+                        total_amount: 999,
+                    },
+                ],
+            },
+        ];
     });
 
     it('should set user attribute', function(done) {
@@ -295,48 +336,62 @@ describe('Google Analytics 4 Event Forwarder', function() {
             },
         });
 
-        var result = [
-            'event',
-            'add_to_cart',
-            {
-                currency: 'USD',
-                items: [
+        result[1] = 'add_to_cart';
+
+        window.dataLayer[0].should.match(result);
+
+        done();
+    });
+
+    it('should log a remove from cart commerce event', function(done) {
+        mParticle.forwarder.process({
+            CurrencyCode: 'USD',
+            EventName: 'Test Purchase Event',
+            EventDataType: MessageType.Commerce,
+            EventCategory: CommerceEventType.ProductRemoveFromCart,
+            ProductAction: {
+                ProductActionType: ProductActionType.RemoveFromCart,
+                ProductList: [
                     {
-                        attributes: {
+                        Attributes: {
                             eventMetric1: 'metric2',
                             journeyType: 'testjourneytype1',
                         },
-                        coupon_code: 'coupon',
-                        item_brand: 'brand',
-                        item_category: 'category',
-                        item_id: 'iphoneSKU',
-                        item_name: 'iphone',
-                        item_variant: 'variant',
-                        position: 1,
-                        price: 999,
-                        quantity: 1,
-                        total_amount: 999,
+                        Brand: 'brand',
+                        Category: 'category',
+                        CouponCode: 'coupon',
+                        Name: 'iphone',
+                        Position: 1,
+                        Price: 999,
+                        Quantity: 1,
+                        Sku: 'iphoneSKU',
+                        TotalAmount: 999,
+                        Variant: 'variant',
                     },
                     {
-                        attributes: {
+                        Attributes: {
                             eventMetric1: 'metric1',
                             journeyType: 'testjourneytype2',
                         },
-                        coupon_code: 'coupon',
-                        item_brand: 'brand',
-                        item_category: 'category',
-                        item_id: 'iphoneSKU',
-                        item_name: 'iphone',
-                        item_variant: 'variant',
-                        position: 1,
-                        price: 999,
-                        quantity: 1,
-                        total_amount: 999,
+                        Brand: 'brand',
+                        Category: 'category',
+                        CouponCode: 'coupon',
+                        Name: 'iphone',
+                        Position: 1,
+                        Price: 999,
+                        Quantity: 1,
+                        Sku: 'iphoneSKU',
+                        TotalAmount: 999,
+                        Variant: 'variant',
                     },
                 ],
+                TotalAmount: 450,
+                TaxAmount: 40,
+                ShippingAmount: 10,
             },
-        ];
+        });
 
+        result[1] = 'remove_from_cart';
         window.dataLayer[0].should.match(result);
 
         done();
@@ -391,49 +446,7 @@ describe('Google Analytics 4 Event Forwarder', function() {
             },
         });
 
-        var result = [
-            'event',
-            'begin_checkout',
-            {
-                coupon: 'couponCode',
-                currency: 'USD',
-                items: [
-                    {
-                        attributes: {
-                            eventMetric1: 'metric2',
-                            journeyType: 'testjourneytype1',
-                        },
-                        coupon_code: 'coupon',
-                        item_brand: 'brand',
-                        item_category: 'category',
-                        item_id: 'iphoneSKU',
-                        item_name: 'iphone',
-                        item_variant: 'variant',
-                        position: 1,
-                        price: 999,
-                        quantity: 1,
-                        total_amount: 999,
-                    },
-                    {
-                        attributes: {
-                            eventMetric1: 'metric1',
-                            journeyType: 'testjourneytype2',
-                        },
-                        coupon_code: 'coupon',
-                        item_brand: 'brand',
-                        item_category: 'category',
-                        item_id: 'iphoneSKU',
-                        item_name: 'iphone',
-                        item_variant: 'variant',
-                        position: 1,
-                        price: 999,
-                        quantity: 1,
-                        total_amount: 999,
-                    },
-                ],
-            },
-        ];
-        debugger;
+        result[1] = 'begin_checkout';
         window.dataLayer[0].should.match(result);
 
         done();

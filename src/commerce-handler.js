@@ -19,9 +19,8 @@ var PromotionType = {
     PromotionView: 18,
 };
 
-CommerceHandler.prototype.buildAddToCart = function(event) {
+CommerceHandler.prototype.buildAddOrRemoveCartItem = function(event) {
     return {
-        currency: event.CurrencyCode,
         // TODO: What should the value of an add to cart be? Sum of the dollar amounts of items?
         // value: event.ProductAction.
         items: buildProductsList(event.ProductAction.ProductList),
@@ -30,48 +29,10 @@ CommerceHandler.prototype.buildAddToCart = function(event) {
 
 CommerceHandler.prototype.buildCheckout = function(event) {
     return {
-        currency: event.CurrencyCode,
         // TODO: What should the value of an add to cart be? Sum of the dollar amounts of items?
         // value: event.ProductAction.
         items: buildProductsList(event.ProductAction.ProductList),
         coupon: event.ProductAction ? event.ProductAction.CouponCode : null,
-    };
-};
-
-CommerceHandler.prototype.buildCheckoutOption = function(event) {
-    return {
-        event: event,
-        eventType: 'commerce_event',
-        eventPayload: {
-            ecommerce: {
-                checkout_option: {
-                    actionField: {
-                        step: event.ProductAction.CheckoutStep,
-                        option: event.ProductAction.CheckoutOptions,
-                    },
-                    products: buildProductsList(
-                        event.ProductAction.ProductList
-                    ),
-                },
-            },
-        },
-    };
-};
-
-CommerceHandler.prototype.buildRemoveFromCart = function(event) {
-    return {
-        event: event,
-        eventType: 'commerce_event',
-        eventPayload: {
-            ecommerce: {
-                currencyCode: event.CurrencyCode || 'USD',
-                remove: {
-                    products: buildProductsList(
-                        event.ProductAction.ProductList
-                    ),
-                },
-            },
-        },
     };
 };
 
@@ -211,7 +172,8 @@ CommerceHandler.prototype.logCommerceEvent = function(event) {
     var ga4CommerceEventParameters;
     switch (event.EventCategory) {
         case ProductActionTypes.AddToCart:
-            ga4CommerceEventParameters = self.buildAddToCart(event);
+        case ProductActionTypes.RemoveFromCart:
+            ga4CommerceEventParameters = self.buildAddOrRemoveCartItem(event);
             break;
         case ProductActionTypes.Checkout:
             ga4CommerceEventParameters = self.buildCheckout(event);
@@ -242,9 +204,6 @@ CommerceHandler.prototype.logCommerceEvent = function(event) {
         case ProductActionTypes.Refund:
             ga4CommerceEventParameters = self.buildRefund(event);
             break;
-        case ProductActionTypes.RemoveFromCart:
-            ga4CommerceEventParameters = self.buildRemoveFromCart(event);
-            break;
         case ProductActionTypes.ViewDetail:
             ga4CommerceEventParameters = self.buildProductViewDetail(event);
             break;
@@ -258,6 +217,8 @@ CommerceHandler.prototype.logCommerceEvent = function(event) {
             console.error('Unknown Commerce Type', event);
             return false;
     }
+    ga4CommerceEventParameters.currency = event.CurrencyCode || null;
+
     gtag(
         'event',
         mapGA4EcommerceEventName(event.EventCategory),
