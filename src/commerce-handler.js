@@ -19,7 +19,7 @@ var PromotionType = {
     PromotionView: 18,
 };
 
-CommerceHandler.prototype.buildAddToCart = function (event) {
+CommerceHandler.prototype.buildAddToCart = function(event) {
     return {
         currency: event.CurrencyCode,
         // TODO: What should the value of an add to cart be? Sum of the dollar amounts of items?
@@ -28,27 +28,17 @@ CommerceHandler.prototype.buildAddToCart = function (event) {
     };
 };
 
-CommerceHandler.prototype.buildCheckout = function (event) {
+CommerceHandler.prototype.buildCheckout = function(event) {
     return {
-        event: event,
-        eventType: 'commerce_event',
-        eventPayload: {
-            ecommerce: {
-                checkout: {
-                    actionField: {
-                        step: event.ProductAction.CheckoutStep,
-                        option: event.ProductAction.CheckoutOptions,
-                    },
-                    products: buildProductsList(
-                        event.ProductAction.ProductList
-                    ),
-                },
-            },
-        },
+        currency: event.CurrencyCode,
+        // TODO: What should the value of an add to cart be? Sum of the dollar amounts of items?
+        // value: event.ProductAction.
+        items: buildProductsList(event.ProductAction.ProductList),
+        coupon: event.ProductAction ? event.ProductAction.CouponCode : null,
     };
 };
 
-CommerceHandler.prototype.buildCheckoutOption = function (event) {
+CommerceHandler.prototype.buildCheckoutOption = function(event) {
     return {
         event: event,
         eventType: 'commerce_event',
@@ -68,7 +58,7 @@ CommerceHandler.prototype.buildCheckoutOption = function (event) {
     };
 };
 
-CommerceHandler.prototype.buildRemoveFromCart = function (event) {
+CommerceHandler.prototype.buildRemoveFromCart = function(event) {
     return {
         event: event,
         eventType: 'commerce_event',
@@ -85,7 +75,7 @@ CommerceHandler.prototype.buildRemoveFromCart = function (event) {
     };
 };
 
-CommerceHandler.prototype.buildImpression = function (event, impression) {
+CommerceHandler.prototype.buildImpression = function(event, impression) {
     return {
         event: event,
         eventType: 'commerce_event',
@@ -98,7 +88,7 @@ CommerceHandler.prototype.buildImpression = function (event, impression) {
     };
 };
 
-CommerceHandler.prototype.buildProductClick = function (event) {
+CommerceHandler.prototype.buildProductClick = function(event) {
     var actionField = {};
 
     if (event.EventAttributes && event.EventAttributes.hasOwnProperty('list')) {
@@ -121,7 +111,7 @@ CommerceHandler.prototype.buildProductClick = function (event) {
     };
 };
 
-CommerceHandler.prototype.buildProductViewDetail = function (event) {
+CommerceHandler.prototype.buildProductViewDetail = function(event) {
     var actionField = {};
 
     if (event.EventAttributes && event.EventAttributes.hasOwnProperty('list')) {
@@ -143,7 +133,7 @@ CommerceHandler.prototype.buildProductViewDetail = function (event) {
         },
     };
 };
-CommerceHandler.prototype.buildPromoClick = function (event) {
+CommerceHandler.prototype.buildPromoClick = function(event) {
     return {
         event: event,
         eventType: 'commerce_event',
@@ -158,7 +148,7 @@ CommerceHandler.prototype.buildPromoClick = function (event) {
         },
     };
 };
-CommerceHandler.prototype.buildPromoView = function (event) {
+CommerceHandler.prototype.buildPromoView = function(event) {
     return {
         event: event,
         eventType: 'commerce_event',
@@ -173,7 +163,7 @@ CommerceHandler.prototype.buildPromoView = function (event) {
         },
     };
 };
-CommerceHandler.prototype.buildPurchase = function (event) {
+CommerceHandler.prototype.buildPurchase = function(event) {
     var productAction = event.ProductAction;
     return {
         event: event,
@@ -195,7 +185,7 @@ CommerceHandler.prototype.buildPurchase = function (event) {
         },
     };
 };
-CommerceHandler.prototype.buildRefund = function (event) {
+CommerceHandler.prototype.buildRefund = function(event) {
     // Full refunds don't require a product list on the GTM side
     // Partial refunds would include the specific items being refunded
     return {
@@ -216,7 +206,7 @@ CommerceHandler.prototype.buildRefund = function (event) {
     };
 };
 
-CommerceHandler.prototype.logCommerceEvent = function (event) {
+CommerceHandler.prototype.logCommerceEvent = function(event) {
     var self = this;
     var ga4CommerceEventParameters;
     switch (event.EventCategory) {
@@ -234,7 +224,7 @@ CommerceHandler.prototype.logCommerceEvent = function (event) {
             break;
         case ProductActionTypes.Impression:
             try {
-                event.ProductImpressions.forEach(function (impression) {
+                event.ProductImpressions.forEach(function(impression) {
                     var ga4ImpressionEvent = self.buildImpression(
                         event,
                         impression
@@ -367,7 +357,7 @@ function parsePromotion(_promotion) {
 function buildProductsList(products) {
     var productsList = [];
 
-    products.forEach(function (product) {
+    products.forEach(function(product) {
         productsList.push(parseProduct(product));
     });
 
@@ -377,7 +367,7 @@ function buildProductsList(products) {
 function buildPromoList(promotions) {
     var promotionsList = [];
 
-    promotions.forEach(function (promotion) {
+    promotions.forEach(function(promotion) {
         promotionsList.push(parsePromotion(promotion));
     });
 
@@ -393,17 +383,15 @@ function mapGA4EcommerceEventName(mpEventType) {
         case ProductActionTypes.Purchase:
             return 'purchase';
         case ProductActionTypes.Checkout:
-            return 'add_to_cart';
+            return 'begin_checkout';
         case ProductActionTypes.Click:
-            return 'add_to_cart';
-        case ProductActionTypes.CheckoutOption:
-            return 'add_to_cart';
+            return 'select_item';
         case ProductActionTypes.Impression:
             return 'add_to_cart';
         case ProductActionTypes.Refund:
-            return 'add_to_cart';
+            return 'refund';
         case ProductActionTypes.ViewDetail:
-            return 'add_to_cart';
+            return 'view_item';
         default:
             console.log('Product Action Type not supported');
             return null;

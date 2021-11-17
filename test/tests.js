@@ -247,7 +247,7 @@ describe('Google Analytics 4 Event Forwarder', function() {
         done();
     });
 
-    it('should log a product purchase commerce event', function(done) {
+    it('should log an add to cart commerce event', function(done) {
         mParticle.forwarder.process({
             CurrencyCode: 'USD',
             EventName: 'Test Purchase Event',
@@ -337,6 +337,103 @@ describe('Google Analytics 4 Event Forwarder', function() {
             },
         ];
 
+        window.dataLayer[0].should.match(result);
+
+        done();
+    });
+
+    it('should log a checkout commerce event', function(done) {
+        mParticle.forwarder.process({
+            CurrencyCode: 'USD',
+            EventName: 'Test Purchase Event',
+            EventDataType: MessageType.Commerce,
+            EventCategory: CommerceEventType.ProductCheckout,
+            ProductAction: {
+                ProductActionType: ProductActionType.ProductCheckout,
+                ProductList: [
+                    {
+                        Attributes: {
+                            eventMetric1: 'metric2',
+                            journeyType: 'testjourneytype1',
+                        },
+                        Brand: 'brand',
+                        Category: 'category',
+                        CouponCode: 'coupon',
+                        Name: 'iphone',
+                        Position: 1,
+                        Price: 999,
+                        Quantity: 1,
+                        Sku: 'iphoneSKU',
+                        TotalAmount: 999,
+                        Variant: 'variant',
+                    },
+                    {
+                        Attributes: {
+                            eventMetric1: 'metric1',
+                            journeyType: 'testjourneytype2',
+                        },
+                        Brand: 'brand',
+                        Category: 'category',
+                        CouponCode: 'coupon',
+                        Name: 'iphone',
+                        Position: 1,
+                        Price: 999,
+                        Quantity: 1,
+                        Sku: 'iphoneSKU',
+                        TotalAmount: 999,
+                        Variant: 'variant',
+                    },
+                ],
+                TotalAmount: 450,
+                TaxAmount: 40,
+                ShippingAmount: 10,
+                CouponCode: 'couponCode',
+            },
+        });
+
+        var result = [
+            'event',
+            'begin_checkout',
+            {
+                coupon: 'couponCode',
+                currency: 'USD',
+                items: [
+                    {
+                        attributes: {
+                            eventMetric1: 'metric2',
+                            journeyType: 'testjourneytype1',
+                        },
+                        coupon_code: 'coupon',
+                        item_brand: 'brand',
+                        item_category: 'category',
+                        item_id: 'iphoneSKU',
+                        item_name: 'iphone',
+                        item_variant: 'variant',
+                        position: 1,
+                        price: 999,
+                        quantity: 1,
+                        total_amount: 999,
+                    },
+                    {
+                        attributes: {
+                            eventMetric1: 'metric1',
+                            journeyType: 'testjourneytype2',
+                        },
+                        coupon_code: 'coupon',
+                        item_brand: 'brand',
+                        item_category: 'category',
+                        item_id: 'iphoneSKU',
+                        item_name: 'iphone',
+                        item_variant: 'variant',
+                        position: 1,
+                        price: 999,
+                        quantity: 1,
+                        total_amount: 999,
+                    },
+                ],
+            },
+        ];
+        debugger;
         window.dataLayer[0].should.match(result);
 
         done();
