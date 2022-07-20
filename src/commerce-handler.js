@@ -1,8 +1,10 @@
+const hookService = require('./hookService');
 function CommerceHandler(common) {
     this.common = common || {};
 }
 
 CommerceHandler.prototype.logCommerceEvent = function(event) {
+    hookService.handlePoastCall(event);
     /*
         Sample ecommerce event schema:
         {

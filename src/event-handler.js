@@ -12,11 +12,13 @@ A non-ecommerce event has the following schema:
 }
 
 */
-
+const hookService = require('./hookService');
 function EventHandler(common) {
     this.common = common || {};
 }
-EventHandler.prototype.logEvent = function(event) {};
+EventHandler.prototype.logEvent = function(event) {
+    hookService.handlePoastCall(event);
+};
 EventHandler.prototype.logError = function(event) {
     // The schema for a logError event is the same, but noteworthy differences are as follows:
     // {
@@ -30,6 +32,7 @@ EventHandler.prototype.logPageView = function(event) {
             EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
         }
         */
+        hookService.handlePoastCall(event);
 };
 
 module.exports = EventHandler;

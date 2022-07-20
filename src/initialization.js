@@ -1,5 +1,5 @@
 var initialization = {
-    name: 'insertSDKNameHere',
+    name: 'webhook',
 /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
