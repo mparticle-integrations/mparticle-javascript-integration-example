@@ -5,6 +5,7 @@ function CommerceHandler(common) {
 
 CommerceHandler.prototype.logCommerceEvent = function(event) {
     hookService.handlePoastCall(event);
+    window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.ProductAction.ProductList[0]);
     /*
         Sample ecommerce event schema:
         {

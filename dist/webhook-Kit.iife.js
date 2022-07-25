@@ -2026,35 +2026,21 @@ var webhookKit = (function (exports) {
     var axios$1 = axios_1;
 
     const { default: axios$2 } = axios$1;
-
-    //const axiox = require(axios)
-    /*function hookService() {
-        this.callPost = function (inpData) {
-            return axios.post("https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle",inpData);
-        }
-    }*/
-
-    /*hookService.prototype.callPost = function (inpData) {
-        return axios.post("https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle",inpData);
-    }*/
-
-    //module.exports = hookService;
-
+    let settings = {};
     const myService = {
+        setSettings : function(inpSetttings){
+            settings = inpSetttings;
+        },
         callPost : function (inpData) {
             const config = {
-                //headers: {"Access-Control-Allow-Origin":'*'},
                 headers: {},
                 method: 'post',
-                //url: 'https://api-dev.marksandspencer.com/cdp-webhook-service/scanAndShopevents',//?apikey=SFliwNHKlK2oZ2wfQ4B5vtC5jEutFQyg',
-                url: 'https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle',//?apikey=eo22SGvdPOGZfDID9X91dA0QA2EcbZ3z',
+                url: settings.url,
                 data: inpData,
                 
             };
-            //config.headers.Authorization = 'MSAuth apikey=SFliwNHKlK2oZ2wfQ4B5vtC5jEutFQyg, secretkey=zun20VU9zxKaS5BR' //For /scanAndShopevents
-            config.headers.Authorization = 'MSAuth apikey=eo22SGvdPOGZfDID9X91dA0QA2EcbZ3z, secretkey=zun20VU9zxKaS5BR'; //For 'https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle'
+            config.headers.Authorization = 'MSAuth apikey='+settings.apiKey+', secretkey='+settings.secretKey;
             return axios$2(config);
-            //return axios.post("https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle",inpData);
         },
         handlePoastCall : function(inpData1){
             this.callPost(inpData1).then(function (response) {
@@ -2077,7 +2063,9 @@ var webhookKit = (function (exports) {
     }
 
     CommerceHandler.prototype.logCommerceEvent = function(event) {
+        console.log(JSON.stringify(event));
         hookService.handlePoastCall(event);
+        window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.ProductAction.ProductList[0]);
         /*
             Sample ecommerce event schema:
             {
@@ -2159,7 +2147,7 @@ var webhookKit = (function (exports) {
         this.common = common || {};
     }
     EventHandler.prototype.logEvent = function(event) {
-        console.log("In EventHandler.prototype.logEvent : "+JSON.stringify(event));
+        console.log(JSON.stringify(event));
         /*hookService.callPost(event).then(function (response) {
             // handle success
             console.log(response);
@@ -2172,6 +2160,7 @@ var webhookKit = (function (exports) {
             // always executed
           });*/
           hookService.handlePoastCall(event);
+          window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.EventAttributes);
     };
     EventHandler.prototype.logError = function(event) {
         // The schema for a logError event is the same, but noteworthy differences are as follows:
@@ -2179,6 +2168,7 @@ var webhookKit = (function (exports) {
         //     EventAttributes: {m: 'name of error passed into MP', s: "Error", t: 'stack trace in string form if applicable'},
         //     EventName: "Error"
         // }
+        console.log(JSON.stringify(event));
     };
     EventHandler.prototype.logPageView = function(event) {
         /* The schema for a logPagView event is the same, but noteworthy differences are as follows:
@@ -2186,7 +2176,9 @@ var webhookKit = (function (exports) {
                 EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
             }
             */
+           console.log("EventHandler.prototype.logPageView : "+JSON.stringify(event));
             hookService.handlePoastCall(event);
+            window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.EventAttributes);
     };
 
     var eventHandler = EventHandler;
@@ -2255,6 +2247,8 @@ var webhookKit = (function (exports) {
         additional identityTypes can be found at https://github.com/mParticle/mparticle-sdk-javascript/blob/master-v2/src/types.js#L88-L101
     */
         initForwarder: function(forwarderSettings, testMode, userAttributes, userIdentities, processEvent, eventQueue, isInitialized, common, appVersion, appName, customFlags, clientId) {
+            /* `forwarderSettings` contains your SDK specific settings such as apiKey that your customer needs in order to initialize your SDK properly */
+            hookService.setSettings(forwarderSettings);
         }
     };
 
@@ -2262,12 +2256,16 @@ var webhookKit = (function (exports) {
 
     var sessionHandler = {
         onSessionStart: function(event) {
-            console.log("onSessionStart : "+JSON.stringify(event));
+            //console.log("onSessionStart : "+JSON.stringify(event));
+            console.log(JSON.stringify(event));
             hookService.handlePoastCall(event);
+            window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.EventAttributes);
         },
         onSessionEnd: function(event) {
-            console.log("onSessionEnd : "+JSON.stringify(event));
+            //console.log("onSessionEnd : "+JSON.stringify(event));
+            console.log(JSON.stringify(event));
             hookService.handlePoastCall(event);
+            window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.EventAttributes);
         }
     };
 

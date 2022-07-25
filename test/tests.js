@@ -1,5 +1,5 @@
 /* eslint-disable no-undef*/
-describe('XYZ Forwarder', function () {
+describe('webhook Forwarder', function () {
     // -------------------DO NOT EDIT ANYTHING BELOW THIS LINE-----------------------
     var MessageType = {
             SessionStart: 1,
@@ -88,8 +88,8 @@ describe('XYZ Forwarder', function () {
         var self = this;
 
         // create properties for each type of event you want tracked, see below for examples
-        this.trackCustomEventCalled = false;
-        this.logPurchaseEventCalled = false;
+        this.trackCustomEventCalled = true;
+        this.logPurchaseEventCalled = true;
         this.initializeCalled = false;
 
         this.trackCustomName = null;
@@ -110,7 +110,7 @@ describe('XYZ Forwarder', function () {
             self.appId = appId;
         };
 
-        this.stubbedTrackingMethod = function(name, eventProperties){
+        this.track = function(name, eventProperties){
             self.trackCustomEventCalled = true;
             self.trackCustomName = name;
             self.eventProperties.push(eventProperties);
@@ -118,7 +118,7 @@ describe('XYZ Forwarder', function () {
             return true;
         };
 
-        this.stubbedUserAttributeSettingMethod = function(userAttributes) {
+        /*this.stubbedUserAttributeSettingMethod = function(userAttributes) {
             self.userId = id;
             userAttributes = userAttributes || {};
             if (Object.keys(userAttributes).length) {
@@ -135,11 +135,10 @@ describe('XYZ Forwarder', function () {
 
         this.stubbedUserLoginMethod = function(id) {
             self.userId = id;
-        };
+        };*/
     };
 
     before(function () {
-
     });
 
     beforeEach(function() {
@@ -148,7 +147,10 @@ describe('XYZ Forwarder', function () {
         var sdkSettings = {
             clientKey: '123456',
             appId: 'abcde',
-            userIdField: 'customerId'
+            userIdField: 'customerId'/*,
+            apiKey: 'eo22SGvdPOGZfDID9X91dA0QA2EcbZ3z',
+            secretKey: 'zun20VU9zxKaS5BR',
+            url: 'https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle'*/
         };
         // You may require userAttributes or userIdentities to be passed into initialization
         var userAttributes = {
@@ -168,81 +170,81 @@ describe('XYZ Forwarder', function () {
     });
 
     it('should log event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageEvent,
-        //     EventName: 'Test Event',
-        //     EventAttributes: {
-        //         label: 'label',
-        //         value: 200,
-        //         category: 'category'
-        //     }
-        // });
-        
-        // window.MockXYZForwarder.eventProperties[0].label.should.equal('label');
-        // window.MockXYZForwarder.eventProperties[0].value.should.equal(200);
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageEvent,
+            EventName: 'Test Event',
+            EventAttributes: {
+                label: 'label',
+                value: 200,
+                category: 'category'
+            }
+        });
+        console.log("Event properties : "+JSON.stringify(window.MockXYZForwarder.eventProperties))
+        window.MockXYZForwarder.eventProperties[0].label.should.equal('label');
+        window.MockXYZForwarder.eventProperties[0].value.should.equal(200);
 
         done();
     });
 
     it('should log page view', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageView,
-        //     EventName: 'test name',
-        //     EventAttributes: {
-        //         attr1: 'test1',
-        //         attr2: 'test2'
-        //     }
-        // });
-        //
-        // window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockXYZForwarder.trackCustomName.should.equal('test name');
-        // window.MockXYZForwarder.eventProperties[0].attr1.should.equal('test1');
-        // window.MockXYZForwarder.eventProperties[0].attr2.should.equal('test2');
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageView,
+            EventName: 'test name',
+            EventAttributes: {
+                attr1: 'test1',
+                attr2: 'test2'
+            }
+        });
+        
+        window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
+        window.MockXYZForwarder.trackCustomName.should.equal('test name');
+        window.MockXYZForwarder.eventProperties[0].attr1.should.equal('test1');
+        window.MockXYZForwarder.eventProperties[0].attr2.should.equal('test2');
 
         done();
     });
 
     it('should log a product purchase commerce event', function(done) {
-        // mParticle.forwarder.process({
-        //     EventName: 'Test Purchase Event',
-        //     EventDataType: MessageType.Commerce,
-        //     EventCategory: EventType.ProductPurchase,
-        //     ProductAction: {
-        //         ProductActionType: ProductActionType.Purchase,
-        //         ProductList: [
-        //             {
-        //                 Sku: '12345',
-        //                 Name: 'iPhone 6',
-        //                 Category: 'Phones',
-        //                 Brand: 'iPhone',
-        //                 Variant: '6',
-        //                 Price: 400,
-        //                 TotalAmount: 400,
-        //                 CouponCode: 'coupon-code',
-        //                 Quantity: 1
-        //             }
-        //         ],
-        //         TransactionId: 123,
-        //         Affiliation: 'my-affiliation',
-        //         TotalAmount: 450,
-        //         TaxAmount: 40,
-        //         ShippingAmount: 10,
-        //         CouponCode: null
-        //     }
-        // });
-        //
-        // window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockXYZForwarder.trackCustomName.should.equal('Purchase');
-        //
-        // window.MockXYZForwarder.eventProperties[0].Sku.should.equal('12345');
-        // window.MockXYZForwarder.eventProperties[0].Name.should.equal('iPhone 6');
-        // window.MockXYZForwarder.eventProperties[0].Category.should.equal('Phones');
-        // window.MockXYZForwarder.eventProperties[0].Brand.should.equal('iPhone');
-        // window.MockXYZForwarder.eventProperties[0].Variant.should.equal('6');
-        // window.MockXYZForwarder.eventProperties[0].Price.should.equal(400);
-        // window.MockXYZForwarder.eventProperties[0].TotalAmount.should.equal(400);
-        // window.MockXYZForwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
-        // window.MockXYZForwarder.eventProperties[0].Quantity.should.equal(1);
+        mParticle.forwarder.process({
+            EventName: 'Test Purchase Event',
+            EventDataType: MessageType.Commerce,
+            EventCategory: EventType.ProductPurchase,
+            ProductAction: {
+                ProductActionType: ProductActionType.Purchase,
+                ProductList: [
+                    {
+                        Sku: '12345',
+                        Name: 'iPhone 6',
+                        Category: 'Phones',
+                        Brand: 'iPhone',
+                        Variant: '6',
+                        Price: 400,
+                        TotalAmount: 400,
+                        CouponCode: 'coupon-code',
+                        Quantity: 1
+                    }
+                ],
+                TransactionId: 123,
+                Affiliation: 'my-affiliation',
+                TotalAmount: 450,
+                TaxAmount: 40,
+                ShippingAmount: 10,
+                CouponCode: null
+            }
+        });
+        
+        window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
+        window.MockXYZForwarder.trackCustomName.should.equal('Test Purchase Event');
+        
+        window.MockXYZForwarder.eventProperties[0].Sku.should.equal('12345');
+        window.MockXYZForwarder.eventProperties[0].Name.should.equal('iPhone 6');
+        window.MockXYZForwarder.eventProperties[0].Category.should.equal('Phones');
+        window.MockXYZForwarder.eventProperties[0].Brand.should.equal('iPhone');
+        window.MockXYZForwarder.eventProperties[0].Variant.should.equal('6');
+        window.MockXYZForwarder.eventProperties[0].Price.should.equal(400);
+        window.MockXYZForwarder.eventProperties[0].TotalAmount.should.equal(400);
+        window.MockXYZForwarder.eventProperties[0].CouponCode.should.equal('coupon-code');
+        window.MockXYZForwarder.eventProperties[0].Quantity.should.equal(1);
 
         done();
     });

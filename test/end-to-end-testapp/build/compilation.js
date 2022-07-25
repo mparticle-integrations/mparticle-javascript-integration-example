@@ -2026,35 +2026,21 @@ var webhookKit = (function (exports) {
     var axios$1 = axios_1;
 
     const { default: axios$2 } = axios$1;
-
-    //const axiox = require(axios)
-    /*function hookService() {
-        this.callPost = function (inpData) {
-            return axios.post("https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle",inpData);
-        }
-    }*/
-
-    /*hookService.prototype.callPost = function (inpData) {
-        return axios.post("https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle",inpData);
-    }*/
-
-    //module.exports = hookService;
-
+    let settings = {};
     const myService = {
+        setSettings : function(inpSetttings){
+            settings = inpSetttings;
+        },
         callPost : function (inpData) {
             const config = {
-                //headers: {"Access-Control-Allow-Origin":'*'},
                 headers: {},
                 method: 'post',
-                //url: 'https://api-dev.marksandspencer.com/cdp-webhook-service/scanAndShopevents',//?apikey=SFliwNHKlK2oZ2wfQ4B5vtC5jEutFQyg',
-                url: 'https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle',//?apikey=eo22SGvdPOGZfDID9X91dA0QA2EcbZ3z',
+                url: settings.url,
                 data: inpData,
                 
             };
-            //config.headers.Authorization = 'MSAuth apikey=SFliwNHKlK2oZ2wfQ4B5vtC5jEutFQyg, secretkey=zun20VU9zxKaS5BR' //For /scanAndShopevents
-            config.headers.Authorization = 'MSAuth apikey=eo22SGvdPOGZfDID9X91dA0QA2EcbZ3z, secretkey=zun20VU9zxKaS5BR'; //For 'https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle'
+            config.headers.Authorization = 'MSAuth apikey='+settings.apiKey+', secretkey='+settings.secretKey;
             return axios$2(config);
-            //return axios.post("https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle",inpData);
         },
         handlePoastCall : function(inpData1){
             this.callPost(inpData1).then(function (response) {
@@ -2255,6 +2241,8 @@ var webhookKit = (function (exports) {
         additional identityTypes can be found at https://github.com/mParticle/mparticle-sdk-javascript/blob/master-v2/src/types.js#L88-L101
     */
         initForwarder: function(forwarderSettings, testMode, userAttributes, userIdentities, processEvent, eventQueue, isInitialized, common, appVersion, appName, customFlags, clientId) {
+            /* `forwarderSettings` contains your SDK specific settings such as apiKey that your customer needs in order to initialize your SDK properly */
+            hookService.setSettings(forwarderSettings);
         }
     };
 
@@ -2786,7 +2774,9 @@ var webhookKit = (function (exports) {
     }
 
     var SDKsettings = {
-        apiKey: 'testAPIKey'
+        apiKey: 'eo22SGvdPOGZfDID9X91dA0QA2EcbZ3z',
+        secretKey: 'zun20VU9zxKaS5BR',
+        url: 'https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle'
         /* fill in SDKsettings with any particular settings or options your sdk requires in order to
         initialize, this may be apiKey, projectId, primaryCustomerType, etc. These are passed
         into the src/initialization.js file as the
@@ -2794,7 +2784,7 @@ var webhookKit = (function (exports) {
     };
 
     // Do not edit below:
-    var settings = SDKsettings;
+    var settings$1 = SDKsettings;
 
     var name$1 = initialization_1.name;
 
@@ -2803,7 +2793,7 @@ var webhookKit = (function (exports) {
         moduleId: 100, // when published, you will receive a new moduleID
         isDebug: true,
         isSandbox: true,
-        settings: settings,
+        settings: settings$1,
         userIdentityFilters: [],
         hasDebugString: [],
         isVisible: [],

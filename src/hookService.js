@@ -1,23 +1,24 @@
 const { default: axios } = require("axios");
-
-
-
+let settings = {};
 const myService = {
+    setSettings : function(inpSetttings){
+        settings = inpSetttings;
+    },
     callPost : function (inpData) {
         const config = {
             headers: {},
             method: 'post',
-            url: 'https://api-stage.marksandspencer.com/phoenix-eventcollector/v1/event/mparticle',
+            url: settings.url,
             data: inpData,
             
         }
-        config.headers.Authorization = 'MSAuth apikey=eo22SGvdPOGZfDID9X91dA0QA2EcbZ3z, secretkey=zun20VU9zxKaS5BR' 
+        config.headers.Authorization = 'MSAuth apikey='+settings.apiKey+', secretkey='+settings.secretKey
         return axios(config);
     },
     handlePoastCall : function(inpData1){
         this.callPost(inpData1).then(function (response) {
             // handle success
-            //console.log(response);
+            console.log(response);
           })
           .catch(function (error) {
             // handle error

@@ -17,7 +17,8 @@ function EventHandler(common) {
     this.common = common || {};
 }
 EventHandler.prototype.logEvent = function(event) {
-    hookService.handlePoastCall(event);
+      hookService.handlePoastCall(event);
+      window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.EventAttributes);
 };
 EventHandler.prototype.logError = function(event) {
     // The schema for a logError event is the same, but noteworthy differences are as follows:
@@ -25,6 +26,7 @@ EventHandler.prototype.logError = function(event) {
     //     EventAttributes: {m: 'name of error passed into MP', s: "Error", t: 'stack trace in string form if applicable'},
     //     EventName: "Error"
     // }
+    console.log(JSON.stringify(event));
 };
 EventHandler.prototype.logPageView = function(event) {
     /* The schema for a logPagView event is the same, but noteworthy differences are as follows:
@@ -33,6 +35,7 @@ EventHandler.prototype.logPageView = function(event) {
         }
         */
         hookService.handlePoastCall(event);
+        window.MockXYZForwarder && window.MockXYZForwarder.track(event.EventName,event.EventAttributes);
 };
 
 module.exports = EventHandler;
