@@ -12,7 +12,7 @@ A non-ecommerce event has the following schema:
 }
 
 */
-const hookService = require('./hookService');
+var hookService = require('./hookService');
 function EventHandler(common) {
     this.common = common || {};
 }
