@@ -1,6 +1,6 @@
-const hookService = require('./hookService');
+var hookService = require('./hookService');
 var initialization = {
-    name: 'webhook',
+    name: 'MarksSpencerWebhookKit',
 /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
