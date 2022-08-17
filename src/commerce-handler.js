@@ -1,4 +1,4 @@
-const hookService = require('./hookService');
+var hookService = require('./hookService');
 function CommerceHandler(common) {
     this.common = common || {};
 }
