@@ -1,11 +1,11 @@
-const { default: axios } = require("axios");
+var { default: axios } = require("axios");
 let settings = {};
-const myService = {
+var myService = {
     setSettings : function(inpSetttings){
         settings = inpSetttings;
     },
     callPost : function (inpData) {
-        const config = {
+        var config = {
             headers: {},
             method: 'post',
             url: settings.url,
