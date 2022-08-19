@@ -6,7 +6,10 @@ var myService = {
     },
     callPost : function (inpData) {
         var config = {
-            headers: {},
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json',
+            },
             method: 'post',
             url: settings.url,
             data: inpData,
