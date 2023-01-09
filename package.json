@@ -1,7 +1,8 @@
 {
-  "name": "integration-nameOfYourIntegration",
+  "name": "vwo-javascript-integration",
   "version": "1.0.3",
   "scripts": {
+    "start": "KIT=vwoJavascriptIntegration npm run watch",
     "testKarma": "node test/boilerplate/test-karma.js",
     "build": "ENVIRONMENT=production rollup --config rollup.config.js",
     "watch": "ENVIRONMENT=production rollup --config rollup.config.js -w",
