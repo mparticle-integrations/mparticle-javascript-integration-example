@@ -3,9 +3,7 @@ function CommerceHandler(common) {
 }
 
 CommerceHandler.prototype.logCommerceEvent = function(event) {
-    const customEvent = new Event("mparticle-vwo-logCommerceEvent");
-    customEvent.data = { event: event};
-    document.dispatchEvent(customEvent);
+    console.log('2 logCommerceEvent: ', event);
     /*
         Sample ecommerce event schema:
         {

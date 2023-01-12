@@ -14,7 +14,7 @@ var vwoJavascriptIntegrationKit = (function (exports) {
     }
 
     CommerceHandler.prototype.logCommerceEvent = function(event) {
-        console.log('2 logCommerceEvent: ', event);
+        console.log('1 logCommerceEvent: ', event);
         /*
             Sample ecommerce event schema:
             {
@@ -92,33 +92,40 @@ var vwoJavascriptIntegrationKit = (function (exports) {
 
     */
 
+    function triggerVWOEvent(event) {
+        if(window.VWO && window.VWO.event) {
+            window.VWO.event(event.EventName, event.EventAttributes);
+        }
+        else {
+            console.error('Please use Event-Arch account only to proceed with VWO');
+        }
+    }
     function EventHandler(common) {
         this.common = common || {};
     }
     EventHandler.prototype.logEvent = function(event) {
-        const customEvent = new Event("mparticle-vwo-logEvent");
-        customEvent.data = { event: event};
-        document.dispatchEvent(customEvent);
+        console.log('logEvent: ', event);
+        triggerVWOEvent(event);
     };
     EventHandler.prototype.logError = function(event) {
+        console.log('logError: ', event);
+        triggerVWOEvent(event);
         // The schema for a logError event is the same, but noteworthy differences are as follows:
         // {
         //     EventAttributes: {m: 'name of error passed into MP', s: "Error", t: 'stack trace in string form if applicable'},
         //     EventName: "Error"
         // }
-        const customEvent = new Event("mparticle-vwo-logError");
-        customEvent.data = { event: event};
-        document.dispatchEvent(customEvent);
+
     };
     EventHandler.prototype.logPageView = function(event) {
+        console.log('logPageView: ', event);
+        triggerVWOEvent(event);
         /* The schema for a logPagView event is the same, but noteworthy differences are as follows:
             {
                 EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
             }
             */
-        const customEvent = new Event("mparticle-vwo-logPageView");
-        customEvent.data = { event: event};
-        document.dispatchEvent(customEvent);
+
     };
 
     var eventHandler = EventHandler;
@@ -722,42 +729,6 @@ var vwoJavascriptIntegrationKit = (function (exports) {
         return moduleId;
     }
 
-    function isObject(val) {
-        return (
-            val != null && typeof val === 'object' && Array.isArray(val) === false
-        );
-    }
-
-    function register(config) {
-        if (!config) {
-            console.log(
-                'You must pass a config object to register the kit ' + name
-            );
-            return;
-        }
-
-        if (!isObject(config)) {
-            console.log(
-                "'config' must be an object. You passed in a " + typeof config
-            );
-            return;
-        }
-
-        if (isObject(config.kits)) {
-            config.kits[name] = {
-                constructor: constructor,
-            };
-        } else {
-            config.kits = {};
-            config.kits[name] = {
-                constructor: constructor,
-            };
-        }
-        console.log(
-            'Successfully registered ' + name + ' to your mParticle configuration'
-        );
-    }
-
     if (typeof window !== 'undefined') {
         if (window && window.mParticle && window.mParticle.addForwarder) {
             window.mParticle.addForwarder({
@@ -768,13 +739,52 @@ var vwoJavascriptIntegrationKit = (function (exports) {
         }
     }
 
-    var webKitWrapper = {
-        register: register,
+    var SDKsettings = {
+        apiKey: 'testAPIKey',
+        account_id: 654331
+        /* fill in SDKsettings with any particular settings or options your sdk requires in order to
+        initialize, this may be apiKey, projectId, primaryCustomerType, etc. These are passed
+        into the src/initialization.js file as the
+        */
     };
-    var webKitWrapper_1 = webKitWrapper.register;
 
-    exports.default = webKitWrapper;
-    exports.register = webKitWrapper_1;
+    // Do not edit below:
+    var settings = SDKsettings;
+
+    var name$1 = initialization_1.name;
+
+    var config = {
+        name: name$1,
+        moduleId: 100, // when published, you will receive a new moduleID
+        isDebug: true,
+        isSandbox: true,
+        settings: settings,
+        userIdentityFilters: [],
+        hasDebugString: [],
+        isVisible: [],
+        eventNameFilters: [],
+        eventTypeFilters: [],
+        attributeFilters: [],
+        screenNameFilters: [],
+        pageViewAttributeFilters: [],
+        userAttributeFilters: [],
+        filteringEventAttributeValue: 'null',
+        filteringUserAttributeValue: 'null',
+        eventSubscriptionId: 123,
+        filteringConsentRuleValues: 'null',
+        excludeAnonymousUser: false
+    };
+
+    window.mParticle.config = window.mParticle.config || {};
+    window.mParticle.config.workspaceToken = 'testkit';
+    window.mParticle.config.requestConfig = false;
+    window.mParticle.config.kitConfigs = [config];
+
+    var endToEndTestapp = {
+
+    };
+
+    exports.default = endToEndTestapp;
 
     return exports;
 
