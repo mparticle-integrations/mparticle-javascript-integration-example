@@ -13,13 +13,20 @@ A non-ecommerce event has the following schema:
 
 */
 
+function triggerVWOEvent(event) {
+    if(window.VWO && window.VWO.event) {
+        window.VWO.event(event.EventName, event.EventAttributes);
+    }
+    else {
+        console.error('Please use Event-Arch account only to proceed with VWO');
+    }
+}
+
 function EventHandler(common) {
     this.common = common || {};
 }
 EventHandler.prototype.logEvent = function(event) {
-    const customEvent = new Event("mparticle-vwo-logEvent");
-    customEvent.data = { event: event};
-    document.dispatchEvent(customEvent);
+    triggerVWOEvent(event);
 };
 EventHandler.prototype.logError = function(event) {
     // The schema for a logError event is the same, but noteworthy differences are as follows:
@@ -27,9 +34,7 @@ EventHandler.prototype.logError = function(event) {
     //     EventAttributes: {m: 'name of error passed into MP', s: "Error", t: 'stack trace in string form if applicable'},
     //     EventName: "Error"
     // }
-    const customEvent = new Event("mparticle-vwo-logError");
-    customEvent.data = { event: event};
-    document.dispatchEvent(customEvent);
+    triggerVWOEvent(event);
 };
 EventHandler.prototype.logPageView = function(event) {
     /* The schema for a logPagView event is the same, but noteworthy differences are as follows:
@@ -37,9 +42,7 @@ EventHandler.prototype.logPageView = function(event) {
             EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
         }
         */
-    const customEvent = new Event("mparticle-vwo-logPageView");
-    customEvent.data = { event: event};
-    document.dispatchEvent(customEvent);
+    triggerVWOEvent(event);
 };
 
 module.exports = EventHandler;
