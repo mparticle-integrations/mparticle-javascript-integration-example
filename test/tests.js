@@ -164,6 +164,8 @@ describe('XYZ Forwarder', function () {
             Identity: 'facebook',
             Type: IdentityType.Facebook
         }];
+
+        // The third argument here is a boolean to indicate that the integration is in test mode to avoid loading any third party scripts. Do not change this value.
         mParticle.forwarder.init(sdkSettings, reportService.cb, true, null, userAttributes, userIdentities);
     });
 
