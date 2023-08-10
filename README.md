@@ -1,4 +1,4 @@
-# mParticle JS Example Web Integration
+# mParticle JS Cortex Web Integration
 
 A web integration (or a kit) is an extension to the core [mParticle Web SDK](https://github.com/mParticle/mparticle-web-sdk). A kit works as a bridge between the mParticle SDK and a partner SDK. It abstracts the implementation complexity, simplifying the implementation for developers.
 
