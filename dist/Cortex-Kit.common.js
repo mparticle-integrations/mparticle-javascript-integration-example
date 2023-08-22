@@ -191,7 +191,7 @@ var initialization = {
             var clientScript = document.createElement('script');
             clientScript.type = 'text/javascript';
             clientScript.async = true;
-            clientScript.src = 'https://assets.vidora.com/js/vidora-client.1.x.x.min.js';   // <---- Update this to be your script
+            clientScript.src = 'https://assets.vidora.com/js/vidora-client-rt.1.x.x.min.js';   // <---- Update this to be your script
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(clientScript);
             clientScript.onload = function(n,_,i,u,a){var r={_q:[]};r.ready=r.push=function(n){r._q.push(n);};var E="vidora_ns";E in n||(n[E]=[]),n[E].push(i),i in n||(n[i]=r),n[i].ready(function(n,_){_._i(u,i,a);});}
             (window,document,"vidora",forwarderSettings.apiKey);
