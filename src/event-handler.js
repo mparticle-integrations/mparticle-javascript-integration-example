@@ -30,8 +30,11 @@ EventHandler.prototype.logPageView = function(event) {
             EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
         }
         */
-    vidora.push(["send", "pageview", null, {params: event.EventAttributes}]);
-    return true;
+    if (!this.common.forwardWebRequestsServerSide) {
+        vidora.push(["send", "pageview", null, {params: event.EventAttributes}]);
+        return true;
+    }
+    return false 
 };
 
 module.exports = EventHandler;
