@@ -18,10 +18,14 @@ identityApiRequest has the schema:
 For more userIdentity types, see https://docs.mparticle.com/developers/sdk/web/idsync/#supported-identity-types
 */
 
+var helpers = require('./helpers');
+
 function IdentityHandler(common) {
     this.common = common || {};
 }
-IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {};
+IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {
+    helpers.fireTraffic();
+};
 IdentityHandler.prototype.onIdentifyComplete = function(
     mParticleUser,
     identityApiRequest
