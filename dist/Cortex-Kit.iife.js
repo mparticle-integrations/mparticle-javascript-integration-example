@@ -94,7 +94,14 @@ var CortexKit = (function (exports) {
     function EventHandler(common) {
         this.common = common || {};
     }
-    EventHandler.prototype.logEvent = function(event) {};
+    EventHandler.prototype.logEvent = function(event) {
+        if (!this.common.recordWithoutSending) {
+            vidora.push(["send", event.EventName, null, {params: event.EventAttributes}]);
+            return true;
+        }
+        vidora.notify(["send", event.EventName, null, {params: event.EventAttributes}]);
+        return false 
+    };
     EventHandler.prototype.logError = function(event) {
         // The schema for a logError event is the same, but noteworthy differences are as follows:
         // {
@@ -108,10 +115,11 @@ var CortexKit = (function (exports) {
                 EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
             }
             */
-        if (!this.common.forwardWebRequestsServerSide) {
+        if (!this.common.recordWithoutSending) {
             vidora.push(["send", "pageview", null, {params: event.EventAttributes}]);
             return true;
         }
+        vidora.notify(["send", "pageview", null, {params: event.EventAttributes}]);
         return false 
     };
 
@@ -140,15 +148,21 @@ var CortexKit = (function (exports) {
     function IdentityHandler(common) {
         this.common = common || {};
     }
-    IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {};
+    IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {
+        vidora.push(['setUserId',mParticleUser.getMPID()]);
+    };
     IdentityHandler.prototype.onIdentifyComplete = function(
         mParticleUser,
         identityApiRequest
-    ) {};
+    ) {
+        vidora.push(['setUserId',mParticleUser.getMPID()]);
+    };
     IdentityHandler.prototype.onLoginComplete = function(
         mParticleUser,
         identityApiRequest
-    ) {};
+    ) {
+        vidora.push(['setUserId',mParticleUser.getMPID()]);
+    };
     IdentityHandler.prototype.onLogoutComplete = function(
         mParticleUser,
         identityApiRequest
@@ -156,7 +170,9 @@ var CortexKit = (function (exports) {
     IdentityHandler.prototype.onModifyComplete = function(
         mParticleUser,
         identityApiRequest
-    ) {};
+    ) {
+        vidora.push(['setUserId',mParticleUser.getMPID()]);
+    };
 
     /*  In previous versions of the mParticle web SDK, setting user identities on
         kits is only reachable via the onSetUserIdentity method below. We recommend
@@ -182,7 +198,8 @@ var CortexKit = (function (exports) {
     */
         initForwarder: function(forwarderSettings, testMode, userAttributes, userIdentities, processEvent, eventQueue, isInitialized, common, appVersion, appName, customFlags, clientId) {
             /* `forwarderSettings` contains your SDK specific settings such as apiKey that your customer needs in order to initialize your SDK properly */
-            common.forwardWebRequestsServerSide = forwarderSettings.forwardWebRequestsServerSide === 'True';
+            common.recordWithoutSending = forwarderSettings.recordWithoutSending === 'True';
+
             if (!testMode) { 
                 /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
                    Generally, our integrations create script tags and append them to the <head>. Please follow the following format as a guide:

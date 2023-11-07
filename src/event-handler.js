@@ -16,7 +16,14 @@ A non-ecommerce event has the following schema:
 function EventHandler(common) {
     this.common = common || {};
 }
-EventHandler.prototype.logEvent = function(event) {};
+EventHandler.prototype.logEvent = function(event) {
+    if (!this.common.recordWithoutSending) {
+        vidora.push(["send", event.EventName, null, {params: event.EventAttributes}]);
+        return true;
+    }
+    vidora.notify(["send", event.EventName, null, {params: event.EventAttributes}]);
+    return false 
+};
 EventHandler.prototype.logError = function(event) {
     // The schema for a logError event is the same, but noteworthy differences are as follows:
     // {
@@ -30,10 +37,11 @@ EventHandler.prototype.logPageView = function(event) {
             EventAttributes: {hostname: "www.google.com", title: 'Test Page'},  // These are event attributes only if no additional event attributes are explicitly provided to mParticle.logPageView(...)
         }
         */
-    if (!this.common.forwardWebRequestsServerSide) {
+    if (!this.common.recordWithoutSending) {
         vidora.push(["send", "pageview", null, {params: event.EventAttributes}]);
         return true;
     }
+    vidora.notify(["send", "pageview", null, {params: event.EventAttributes}]);
     return false 
 };
 
