@@ -1,5 +1,5 @@
 var initialization = {
-    name: 'Cortex',
+    name: 'Vidora',
 /*  ****** Fill out initForwarder to load your SDK ******
     Note that not all arguments may apply to your SDK initialization.
     These are passed from mParticle, but leave them even if they are not being used.
@@ -16,6 +16,7 @@ var initialization = {
             /* Load your Web SDK here using a variant of your snippet from your readme that your customers would generally put into their <head> tags
                Generally, our integrations create script tags and append them to the <head>. Please follow the following format as a guide:
             */
+
             var clientScript = document.createElement('script');
             clientScript.type = 'text/javascript';
             clientScript.async = true;
