@@ -1,5 +1,5 @@
 /* eslint-disable no-undef*/
-describe('XYZ Forwarder', function () {
+describe('Cortex Forwarder', function () {
     // -------------------DO NOT EDIT ANYTHING BELOW THIS LINE-----------------------
     var MessageType = {
             SessionStart: 1,
@@ -146,9 +146,6 @@ describe('XYZ Forwarder', function () {
         window.MockXYZForwarder = new MockXYZForwarder();
         // Include any specific settings that is required for initializing your SDK here
         var sdkSettings = {
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'customerId'
         };
         // You may require userAttributes or userIdentities to be passed into initialization
         var userAttributes = {
@@ -187,19 +184,19 @@ describe('XYZ Forwarder', function () {
     });
 
     it('should log page view', function(done) {
-        // mParticle.forwarder.process({
-        //     EventDataType: MessageType.PageView,
-        //     EventName: 'test name',
-        //     EventAttributes: {
-        //         attr1: 'test1',
-        //         attr2: 'test2'
-        //     }
-        // });
+        mParticle.forwarder.process({
+            EventDataType: MessageType.PageView,
+            EventName: 'test name',
+            EventAttributes: {
+                attr1: 'test1',
+                attr2: 'test2'
+            }
+        });
         //
-        // window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
-        // window.MockXYZForwarder.trackCustomName.should.equal('test name');
-        // window.MockXYZForwarder.eventProperties[0].attr1.should.equal('test1');
-        // window.MockXYZForwarder.eventProperties[0].attr2.should.equal('test2');
+        window.MockXYZForwarder.trackCustomEventCalled.should.equal(true);
+        window.MockXYZForwarder.trackCustomName.should.equal('test name');
+        window.MockXYZForwarder.eventProperties[0].attr1.should.equal('test1');
+        window.MockXYZForwarder.eventProperties[0].attr2.should.equal('test2');
 
         done();
     });
