@@ -21,15 +21,21 @@ For more userIdentity types, see https://docs.mparticle.com/developers/sdk/web/i
 function IdentityHandler(common) {
     this.common = common || {};
 }
-IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {};
+IdentityHandler.prototype.onUserIdentified = function(mParticleUser) {
+    vidora.push(['setUserId',mParticleUser.getMPID()])
+};
 IdentityHandler.prototype.onIdentifyComplete = function(
     mParticleUser,
     identityApiRequest
-) {};
+) {
+    vidora.push(['setUserId',mParticleUser.getMPID()])
+};
 IdentityHandler.prototype.onLoginComplete = function(
     mParticleUser,
     identityApiRequest
-) {};
+) {
+    vidora.push(['setUserId',mParticleUser.getMPID()])
+};
 IdentityHandler.prototype.onLogoutComplete = function(
     mParticleUser,
     identityApiRequest
@@ -37,7 +43,9 @@ IdentityHandler.prototype.onLogoutComplete = function(
 IdentityHandler.prototype.onModifyComplete = function(
     mParticleUser,
     identityApiRequest
-) {};
+) {
+    vidora.push(['setUserId',mParticleUser.getMPID()])
+};
 
 /*  In previous versions of the mParticle web SDK, setting user identities on
     kits is only reachable via the onSetUserIdentity method below. We recommend
