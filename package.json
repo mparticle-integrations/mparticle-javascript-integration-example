@@ -1,9 +1,9 @@
 {
-  "name": "integration-nameOfYourIntegration",
+  "name": "sideload-kit-test",
   "version": "1.0.3",
-  "main": "dist/XYZ-Kit.common.js",
+  "main": "dist/SideloadTest-Kit.common.js",
   "files": [
-    "dist/XYZ-Kit.common.js"
+    "dist/SideloadTest-Kit.common.js"
   ],
   "scripts": {
     "build": "ENVIRONMENT=production rollup --config rollup.config.js",
@@ -14,7 +14,7 @@
     "watch": "ENVIRONMENT=production rollup --config rollup.config.js -w"
   },
   "publishConfig": {
-        "access": "public"
+    "access": "public"
   },
   "devDependencies": {
     "@mparticle/web-kit-wrapper": "^1.0.5",
